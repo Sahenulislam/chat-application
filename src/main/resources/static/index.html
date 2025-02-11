@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h2>WebSocket Chat</h2>
+<div id="chat-box" style="border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: scroll;"></div>
+
+<input type="text" id="username" placeholder="Enter your name" style="width: 200px;">
+<br><br>
+<input type="text" id="message" placeholder="Type a message..." style="width: 300px;">
+<button onclick="sendMessage()">Send</button>
+
+<script>
+    var socket = new SockJS('/chat');  // Connect to WebSocket
+    var stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function () {
+        console.log("Connected!");
+
+        // Subscribe to receive messages
+        stompClient.subscribe('/topic/messages', function (message) {
+            var msg = JSON.parse(message.body);
+            var chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<p><b>${msg.sender}</b>: ${msg.content}</p>`;
+            chatBox.scrollTop = chatBox.scrollHeight;  // Auto-scroll
+        });
+    });
+
+    function sendMessage() {
+        var messageContent = document.getElementById("message").value;
+        var username = document.getElementById("username").value || "Anonymous";
+
+        if (messageContent.trim() !== "") {
+            var message = { sender: username, content: messageContent, type: "CHAT" };
+            stompClient.send("/app/chat", {}, JSON.stringify(message));
+            document.getElementById("message").value = ""; // Clear input
+        }
+    }
+</script>
+</body>
+</html>
