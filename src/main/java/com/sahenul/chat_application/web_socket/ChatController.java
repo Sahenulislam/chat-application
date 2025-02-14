@@ -14,8 +14,15 @@ public class ChatController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @MessageMapping("/chat") // Mapped to STOMP endpoint /app/chat
-    public void sendMessage(String message) {
+    @MessageMapping("/chat/{receiver-id}") // Mapped to STOMP endpoint /app/chat
+    public void sendMessageToUser(String message) {
+        // Broadcast the message to all clients subscribed to /topic/messages
+        messagingTemplate.convertAndSend("/topic/messages", message);
+    }
+
+
+    @MessageMapping("/group-chat/{group-id}") // Mapped to STOMP endpoint /app/chat
+    public void sendMessageToGroup(String message) {
         // Broadcast the message to all clients subscribed to /topic/messages
         messagingTemplate.convertAndSend("/topic/messages", message);
     }
