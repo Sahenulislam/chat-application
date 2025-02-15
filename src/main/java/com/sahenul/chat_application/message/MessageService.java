@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MessageService {
@@ -78,7 +79,16 @@ public class MessageService {
                 messagingTemplate.convertAndSendToUser(member.getUserName(), "/topic/messages", pMessage);
             }
         }
-
-
     }
+
+
+    public List<ConversationDto> getConversationList(){
+        User user=userService.getCurrentUser();
+        return null;//messageRepository.getConversationList(user);
+    }
+
+
+
+
+
 }
