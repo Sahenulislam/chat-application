@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class MessageService {
@@ -84,7 +86,14 @@ public class MessageService {
 
     public List<ConversationDto> getConversationList(){
         User user=userService.getCurrentUser();
-        return null;//messageRepository.getConversationList(user);
+        List<Object[]> conversationList=messageRepository.findConversationList(user);
+
+        return conversationList.stream().map(obj -> new ConversationDto(
+                (Long) obj[0],
+                (String) obj[1],
+                (LocalDateTime) obj[2],
+                (boolean) obj[3]
+        )).collect(Collectors.toList());
     }
 
 
