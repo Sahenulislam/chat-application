@@ -35,6 +35,12 @@ public class MessageService {
         this.groupService = groupService;
     }
 
+    public Message getMessage(Long id){
+        Message message=messageRepository.findById(id).orElse(null);
+        if(message==null)throw new RuntimeException("Message id is not valid");
+        return message;
+    }
+
 
     public void sendMessageToUser(String receiverId, String pMessage) {
         User sender = userService.getCurrentUser();
@@ -97,7 +103,20 @@ public class MessageService {
     }
 
 
+    public List<Message> getConversation(Long partnerId) {
+        User partner=userService.getUser(partnerId);
+        User curentUser=userService.getCurrentUser();
+        return messageRepository.findConversationByUser(curentUser,partner);
+    }
 
+    public List<Message> getGroupConversation(Long groupId) {
+        Group group=groupService.getGroup(groupId);
 
+        return messageRepository.findConversationByGroup(group);
+    }
 
+    public void deleteMessage(Long id) {
+        Message message=getMessage(id);
+        messageRepository.delete(message);
+    }
 }

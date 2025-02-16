@@ -19,7 +19,7 @@ public class UserService {
     public User getCurrentUser(){
         return null; // (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-    public User getCurrentUser(Long id){
+    public User getUser(Long id){
         User user=userRepository.findById(id).orElse(null);
         if(user==null){
             throw new MessageConversionException("User id is not valid");
@@ -38,7 +38,12 @@ public class UserService {
     }
 
 
-
+    public void create(User user) {
+        if(user.getUserName()==null){
+            throw new ArithmeticException("user name must not be null");
+        }
+        userRepository.save(user);
+    }
 
 
 }

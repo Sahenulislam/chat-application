@@ -1,5 +1,6 @@
 package com.sahenul.chat_application.message;
 
+import com.sahenul.chat_application.group.Group;
 import com.sahenul.chat_application.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -60,6 +61,24 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
             m.id, m.group.groupName, m.sender.userName, m.receiver.userName
         ORDER BY MAX(m.timestamp) DESC
     """)
-
     List<Object[]> findConversationList(User user);
+
+
+    @Query("""
+            SELECT m from Message as m
+            WHERE (m.sender=:partner 
+            AND m.receiver=:currentUser)
+            OR (m.receiver=:partner
+            AND m.sender=:currentUser)
+            ORDER by m.timestamp
+            """)
+    List<Message> findConversationByUser(User curentUser, User partner);
+
+
+    @Query("""
+            SELECT m from Message as m
+            where m.group=:group
+            ORDER by m.timestamp
+            """)
+    List<Message> findConversationByGroup(Group group);
 }

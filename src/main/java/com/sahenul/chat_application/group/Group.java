@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "groups")
@@ -25,8 +27,8 @@ public class Group {
     private String groupName;
 
     @OneToMany
-    private List<User> groupMemberList; // List of users in the group
+    private HashSet<User> groupMemberList; // List of users in the group
 
     @OneToMany
-    private List<Message> groupMessageList; // List of messages in the group
+    private Set<Message> groupMessageList; // List of messages in the group
 }
