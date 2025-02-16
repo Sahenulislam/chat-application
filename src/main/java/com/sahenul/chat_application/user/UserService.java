@@ -4,6 +4,8 @@ package com.sahenul.chat_application.user;
 import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class UserService {
@@ -46,4 +48,7 @@ public class UserService {
     }
 
 
+    public List<User> list(String userName, String name) {
+        return userRepository.userList(userName,name);
+    }
 }

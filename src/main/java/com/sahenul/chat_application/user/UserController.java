@@ -23,11 +23,14 @@ public class UserController {
 
 
 
-//    @GetMapping("/list")
-//    public ResponseEntity<?> List(){
-//        userService.create(user);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
+    @GetMapping("/list")
+    public ResponseEntity<?> List(
+            @RequestParam (required = false) String userName,
+            @RequestParam (required = false) String name
+    ){
+
+        return ResponseEntity.ok().body( userService.list(userName,name));
+    }
 
 
 
