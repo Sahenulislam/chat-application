@@ -5,6 +5,7 @@ import com.sahenul.chat_application.group.GroupService;
 import com.sahenul.chat_application.user.User;
 import com.sahenul.chat_application.user.UserService;
 import com.sahenul.chat_application.web_socket.WebSocketSessionTracker;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class MessageService {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -21,19 +23,6 @@ public class MessageService {
     private final WebSocketSessionTracker webSocketSessionTracker;
     private final UserService userService;
     private final GroupService groupService;
-
-    public MessageService(
-            SimpMessagingTemplate messagingTemplate,
-            MessageRepository messageRepository,
-            WebSocketSessionTracker webSocketSessionTracker,
-            UserService userService,
-            GroupService groupService) {
-        this.messagingTemplate = messagingTemplate;
-        this.messageRepository = messageRepository;
-        this.webSocketSessionTracker = webSocketSessionTracker;
-        this.userService = userService;
-        this.groupService = groupService;
-    }
 
     public Message getMessage(Long id){
         Message message=messageRepository.findById(id).orElse(null);

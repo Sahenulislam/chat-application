@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-
+@RequiredArgsConstructor
 public class GroupService {
 
     private final GroupRepository groupRepository;
@@ -19,11 +19,6 @@ public class GroupService {
         groupRepository.save(group);
     }
 
-
-    public GroupService(GroupRepository groupRepository, UserService userService) {
-        this.groupRepository = groupRepository;
-        this.userService = userService;
-    }
 
 
     public Group getGroup(Long id){
