@@ -26,6 +26,7 @@ public class UserService {
         attributes.put("userName", principal.getAttribute("userName"));
         attributes.put("name", principal.getAttribute("name"));
         attributes.put("email", principal.getAttribute("email"));
+        attributes.put("accessToken", principal.getAttribute("accessToken"));
         return attributes;
     }
 
