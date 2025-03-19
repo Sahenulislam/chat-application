@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
             AND (:name IS NULL OR u.name=:name)
             """)
     List<User> userList(String userName, String name);
+    User findByEmail(String email);
+
 }
