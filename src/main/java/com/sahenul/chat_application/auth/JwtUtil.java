@@ -8,6 +8,9 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 import java.util.function.Function;
@@ -15,14 +18,15 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "sdlfjsldfjlskdjf"; // Replace with a secure key
+    private static final String SECRET_KEY_STRING = "VyO3yX7YrDqEtfYoJ9p2y1LjPj6o5tFxZ0dL9vdsafsdafsdafsdaf";
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY_STRING));
     private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256)) // Use this instead of hmacShaKeyFor
+                .signWith(SECRET_KEY) // Use the same key for signing
                 .compact();
     }
 
@@ -40,10 +44,14 @@ public class JwtUtil {
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = Jwts.parser()
+        final Claims claims = Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
         return claimsResolver.apply(claims);
     }
 }
+
+
+

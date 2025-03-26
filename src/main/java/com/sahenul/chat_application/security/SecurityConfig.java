@@ -31,13 +31,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Make it stateless
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/register", "/oauth2/**").permitAll()  // Allow login, register, and OAuth2
+                        .requestMatchers(
+                                "/auth/**",
+                                "/register",
+                                "/oauth2/**",
+                                "/login/oauth2/code/google/**"
+                        ).permitAll()  // Allow login, register, and OAuth2
                         .anyRequest().authenticated() // Secure other APIs
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new Http403ForbiddenEntryPoint()) // Return 403 for unauthorized requests
                 )
-                .oauth2Login(oauth -> oauth.disable()) // Disable OAuth login page
+                .oauth2Login(Customizer.withDefaults()) // Enable OAuth2 login
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
 
         return http.build();
@@ -46,6 +51,12 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(CustomUserDetailsService customUserDetailsService) {
         return customUserDetailsService;
+    }
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 
