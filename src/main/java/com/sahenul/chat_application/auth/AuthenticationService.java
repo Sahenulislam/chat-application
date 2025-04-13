@@ -38,7 +38,7 @@ public class AuthenticationService {
             response = restTemplate.exchange(url, HttpMethod.GET, null, Map.class);
 
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid Google access token");
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid Google access token"));
         }
 
         Map<String, Object> googleUser = new HashMap<>((Map<String, Object>) response.getBody());
