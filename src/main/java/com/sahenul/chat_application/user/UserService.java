@@ -1,10 +1,12 @@
 package com.sahenul.chat_application.user;
 
 
+import com.sahenul.chat_application.security.custom_user_details.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +41,10 @@ public class UserService {
         }
 
         Object principal = authentication.getPrincipal();
-
-        if (principal instanceof User) {
-            return (User) principal;
-        } else if (principal instanceof OAuth2User) {
+        if (principal instanceof OAuth2User) {
             return getCurrentUser((OAuth2User) principal);// Google OAuth2 login
+        }else if (principal instanceof UserDetails) {
+             return findByEmail(((UserDetails) principal).getUsername());// Spring Security login (e.g.)
         }
 
         return null; // Unknown principal type

@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -34,7 +34,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/user")
+    @GetMapping("/me")
     public Object getUserInfo() {
 
         return userService.getCurrentUser();
