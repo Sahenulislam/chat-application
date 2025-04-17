@@ -73,6 +73,7 @@ public class AuthenticationService {
         if (passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             loginDto.setJwtToken(jwtUtil.generateToken(user.getEmail()));
             return ResponseEntity.ok(loginDto);
+
         } else {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid password"));
         }
