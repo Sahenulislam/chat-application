@@ -1,6 +1,6 @@
 package com.sahenul.chat_application.message;
 
-import com.sahenul.chat_application.group.Group;
+import com.sahenul.chat_application.chat_group.ChatGroup;
 import com.sahenul.chat_application.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "messages")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Message {
@@ -26,7 +25,7 @@ public class Message {
     private User receiver;  // for one to one message
 
     @ManyToOne
-    private Group group;     // for group message
+    private ChatGroup chatGroup;     // for group message
 
     private String content;
 

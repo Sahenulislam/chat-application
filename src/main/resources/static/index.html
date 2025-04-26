@@ -37,7 +37,7 @@
 
         if (messageContent.trim() !== "") {
             var message = { sender: username, content: messageContent, type: "CHAT" };
-            stompClient.send("/app/group-chat", {}, JSON.stringify(message));
+            stompClient.send("/app/chatGroup-chat", {}, JSON.stringify(message));
             document.getElementById("message").value = ""; // Clear input
         }
     }

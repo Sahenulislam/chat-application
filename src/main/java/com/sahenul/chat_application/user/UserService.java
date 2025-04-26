@@ -70,6 +70,15 @@ public class UserService {
         return user;
     }
 
+    public User getCurrentUser(Long id){
+        User user=userRepository.findById(id).orElse(null);
+        if(user==null){
+            throw new MessageConversionException("User id is not valid");
+        }
+
+        return user;
+    }
+
 
     public void create(User user) {
         if(user.getUserName()==null){

@@ -41,7 +41,10 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/register",
                                 "/oauth2/**",
-                                "/login/oauth2/code/google/**"
+                                "/login/oauth2/code/google/**",
+                                "/chat/**",
+                                "/app/**"
+
                         ).permitAll()  // Allow login, register, and OAuth2
                         .anyRequest().authenticated() // Secure other APIs
                 )

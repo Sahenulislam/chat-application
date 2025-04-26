@@ -37,4 +37,11 @@ public class MessageController {
         messageService.deleteMessage(id);
         return ResponseEntity.noContent().build();
     }
+
+    //for testing purpose
+    @PostMapping
+    public ResponseEntity<?> sendMessage(@RequestParam(name = "receiverId") Long receiverId, @RequestParam(name = "message") String message) {
+        messageService.sendMessageToUser(receiverId, message);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -1,7 +1,7 @@
 package com.sahenul.chat_application.message.last_message;
 
 
-import com.sahenul.chat_application.group.Group;
+import com.sahenul.chat_application.chat_group.ChatGroup;
 import com.sahenul.chat_application.message.Message;
 import com.sahenul.chat_application.user.User;
 import jakarta.persistence.*;
@@ -25,7 +25,7 @@ public class LastMessage {
     private User receiver;
 
     @ManyToOne
-    private Group group;
+    private ChatGroup chatGroup;
 
     @ManyToOne
     private Message message;

@@ -17,7 +17,9 @@ public class ChatController {
 
 
     @MessageMapping("/chat/{receiverId}") // Mapped to STOMP endpoint /app/chat
-    public void sendMessageToUser(@DestinationVariable String receiverId, String message) {
+    public void sendMessageToUser(@DestinationVariable Long receiverId, String message) {
+        System.out.println("Message received for receiverId: " + receiverId);
+
         messageService.sendMessageToUser(receiverId, message);
 
     }

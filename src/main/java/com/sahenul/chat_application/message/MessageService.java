@@ -1,7 +1,7 @@
 package com.sahenul.chat_application.message;
 
-import com.sahenul.chat_application.group.Group;
-import com.sahenul.chat_application.group.GroupService;
+import com.sahenul.chat_application.chat_group.ChatGroup;
+import com.sahenul.chat_application.chat_group.ChatGroupService;
 import com.sahenul.chat_application.message.last_message.LastMessage;
 import com.sahenul.chat_application.message.last_message.LastMessageRepository;
 import com.sahenul.chat_application.user.User;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -24,7 +23,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final WebSocketSessionTracker webSocketSessionTracker;
     private final UserService userService;
-    private final GroupService groupService;
+    private final ChatGroupService chatGroupService;
     private final LastMessageRepository lastMessageRepository;
 
     public Message getMessage(Long id) {
@@ -34,7 +33,7 @@ public class MessageService {
     }
 
 
-    public void sendMessageToUser(String receiverId, String pMessage) {
+    public void sendMessageToUser(Long receiverId, String pMessage) {
         User sender = (User) userService.getCurrentUser();
 
         User receiver = userService.getCurrentUser(receiverId);
@@ -46,7 +45,8 @@ public class MessageService {
         message.setContent(pMessage);
         message.setTimestamp(LocalDateTime.now());
         message.setSeen(false);
-        message.setDelivered(webSocketSessionTracker.isUserOnline(receiver.getUserName())); // Check online status
+        //message.setDelivered(webSocketSessionTracker.isUserOnline(receiver.getUserName())); // Check online status
+        message.setDelivered(false); // Check online status
 
 
         Message messageObject = messageRepository.save(message);
@@ -60,7 +60,7 @@ public class MessageService {
             lastMessage.setSender(sender);
             lastMessage.setReceiver(receiver);
             lastMessage.setMessage(messageObject);
-            lastMessage.setGroup(null);
+            lastMessage.setChatGroup(null);
             lastMessageRepository.save(lastMessage);
 
 
@@ -68,7 +68,7 @@ public class MessageService {
             lastMessageAnother.setSender(receiver);
             lastMessageAnother.setReceiver(sender);
             lastMessageAnother.setMessage(messageObject);
-            lastMessageAnother.setGroup(null);
+            lastMessageAnother.setChatGroup(null);
             lastMessageRepository.save(lastMessageAnother);
         }else{
             lastMessage.setMessage(messageObject);
@@ -88,24 +88,24 @@ public class MessageService {
 
     public void sendMessageToGroup(Long groupId, String pMessage) {
 
-        Group group = groupService.getCurrentUserGroup(groupId);
+        ChatGroup chatGroup = chatGroupService.getCurrentUserGroup(groupId);
 
         User sender = (User) userService.getCurrentUser();
 
         Message message = new Message();
         message.setSender(sender);
         message.setContent(pMessage);
-        message.setGroup(group);
+        message.setChatGroup(chatGroup);
         message.setTimestamp(LocalDateTime.now());
         message.setSeen(false);
 
         messageRepository.save(message);
 
         // If the receiver is online, send the pMessage via WebSocket
-        for (User member : group.getGroupMemberList()) {
+        for (User member : chatGroup.getGroupMemberList()) {
             LastMessage lastMessage=new LastMessage();
             lastMessage.setSender(member);
-            lastMessage.setGroup(group);
+            lastMessage.setChatGroup(chatGroup);
             lastMessage.setMessage(message);
             lastMessageRepository.save(lastMessage);
 
@@ -137,9 +137,9 @@ public class MessageService {
     }
 
     public List<Message> getGroupConversation(Long groupId) {
-        Group group = groupService.getGroup(groupId);
+        ChatGroup chatGroup = chatGroupService.getGroup(groupId);
 
-        return messageRepository.findConversationByGroup(group);
+        return messageRepository.findConversationByGroup(chatGroup);
     }
 
     public void deleteMessage(Long id) {

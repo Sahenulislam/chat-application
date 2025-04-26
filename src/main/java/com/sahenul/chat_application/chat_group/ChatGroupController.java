@@ -1,4 +1,4 @@
-package com.sahenul.chat_application.group;
+package com.sahenul.chat_application.chat_group;
 
 
 import lombok.RequiredArgsConstructor;
@@ -12,33 +12,33 @@ import java.util.List;
 @RestController
 @RequestMapping("api/group")
 @RequiredArgsConstructor
-public class GroupController {
+public class ChatGroupController {
 
-    private final GroupService groupService;
+    private final ChatGroupService chatGroupService;
 
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Group group){
-        groupService.create(group);
+    public ResponseEntity<?> create(@RequestBody ChatGroup chatGroup){
+        chatGroupService.create(chatGroup);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody Group group){
-        groupService.update(group);
+    public ResponseEntity<?> update(@RequestBody ChatGroup chatGroup){
+        chatGroupService.update(chatGroup);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/delete/{group-id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long groupId){
-        groupService.delete(groupId);
+        chatGroupService.delete(groupId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/delete-user/{group-id}")
     public ResponseEntity<?> deleteUsers(@PathVariable Long groupId, @RequestBody List<Long> userList){
-        groupService.deleteUsers(groupId,userList);
+        chatGroupService.deleteUsers(groupId,userList);
         return ResponseEntity.noContent().build();
     }
 

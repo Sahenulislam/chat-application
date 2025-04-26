@@ -1,6 +1,6 @@
 package com.sahenul.chat_application.message;
 
-import com.sahenul.chat_application.group.Group;
+import com.sahenul.chat_application.chat_group.ChatGroup;
 import com.sahenul.chat_application.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,11 +25,11 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
 //
 //        UNION
 //
-//        (SELECT m.group.id, m.group.name, MAX(m.timestamp)
+//        (SELECT m.chatGroup.id, m.chatGroup.name, MAX(m.timestamp)
 //         FROM Message m
-//         WHERE m.group IS NOT NULL AND
-//               :userId MEMBER OF m.group.groupMemberList
-//         GROUP BY m.group.id, m.group.name)
+//         WHERE m.chatGroup IS NOT NULL AND
+//               :userId MEMBER OF m.chatGroup.groupMemberList
+//         GROUP BY m.chatGroup.id, m.chatGroup.name)
 //
 //        ORDER BY MAX(m.timestamp) DESC
 //    """)
@@ -39,26 +39,26 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
         SELECT 
             m.id, 
             CASE 
-                WHEN m.group IS NOT NULL THEN m.group.groupName
+                WHEN m.chatGroup IS NOT NULL THEN m.chatGroup.groupName
                 WHEN m.sender = :user THEN m.receiver.userName
                 ELSE m.sender.userName
             END,
             MAX(m.timestamp),
             CASE 
-                WHEN m.group IS NOT NULL THEN true
+                WHEN m.chatGroup IS NOT NULL THEN true
                 ELSE false
             END
         FROM Message m
         WHERE 
             m.sender = :user OR m.receiver = :user OR 
-            (m.group IS NOT NULL AND :user MEMBER OF m.group.groupMemberList)
+            (m.chatGroup IS NOT NULL AND :user MEMBER OF m.chatGroup.groupMemberList)
         GROUP BY 
             CASE 
-                WHEN m.group IS NOT NULL THEN m.group.id
+                WHEN m.chatGroup IS NOT NULL THEN m.chatGroup.id
                 WHEN m.sender = :user THEN m.receiver.id
                 ELSE m.sender.id
             END, 
-            m.id, m.group.groupName, m.sender.userName, m.receiver.userName
+            m.id, m.chatGroup.groupName, m.sender.userName, m.receiver.userName
         ORDER BY MAX(m.timestamp) DESC
     """)
     List<Object[]> findConversationList(User user);
@@ -77,8 +77,8 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
 
     @Query("""
             SELECT m from Message as m
-            where m.group=:group
+            where m.chatGroup=:chatGroup
             ORDER by m.timestamp
             """)
-    List<Message> findConversationByGroup(Group group);
+    List<Message> findConversationByGroup(ChatGroup chatGroup);
 }

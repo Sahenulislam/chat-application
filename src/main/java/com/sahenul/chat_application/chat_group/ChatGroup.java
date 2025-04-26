@@ -1,4 +1,4 @@
-package com.sahenul.chat_application.group;
+package com.sahenul.chat_application.chat_group;
 
 import com.sahenul.chat_application.message.Message;
 import com.sahenul.chat_application.user.User;
@@ -9,16 +9,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "groups")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Group {
+public class ChatGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
