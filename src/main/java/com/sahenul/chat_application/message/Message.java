@@ -30,8 +30,8 @@ public class Message {
 
     private String content;
 
-    private boolean seen;
-    private boolean delivered;
+    private boolean isSeen;
+    private boolean isDelivered;
 
     private LocalDateTime timestamp;
 }

@@ -2,6 +2,8 @@ package com.sahenul.chat_application.message;
 
 import com.sahenul.chat_application.group.Group;
 import com.sahenul.chat_application.group.GroupService;
+import com.sahenul.chat_application.message.last_message.LastMessage;
+import com.sahenul.chat_application.message.last_message.LastMessageRepository;
 import com.sahenul.chat_application.user.User;
 import com.sahenul.chat_application.user.UserService;
 import com.sahenul.chat_application.web_socket.WebSocketSessionTracker;
@@ -23,6 +25,7 @@ public class MessageService {
     private final WebSocketSessionTracker webSocketSessionTracker;
     private final UserService userService;
     private final GroupService groupService;
+    private final LastMessageRepository lastMessageRepository;
 
     public Message getMessage(Long id) {
         Message message = messageRepository.findById(id).orElse(null);
@@ -46,7 +49,35 @@ public class MessageService {
         message.setDelivered(webSocketSessionTracker.isUserOnline(receiver.getUserName())); // Check online status
 
 
-        messageRepository.save(message);
+        Message messageObject = messageRepository.save(message);
+
+        LastMessage lastMessage = lastMessageRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
+
+        LastMessage lastMessageAnother = lastMessageRepository.findBySenderIdAndReceiverId(receiver.getId(), sender.getId());
+
+        if (lastMessage == null) {
+            lastMessage = new LastMessage();
+            lastMessage.setSender(sender);
+            lastMessage.setReceiver(receiver);
+            lastMessage.setMessage(messageObject);
+            lastMessage.setGroup(null);
+            lastMessageRepository.save(lastMessage);
+
+
+            lastMessageAnother = new LastMessage();
+            lastMessageAnother.setSender(receiver);
+            lastMessageAnother.setReceiver(sender);
+            lastMessageAnother.setMessage(messageObject);
+            lastMessageAnother.setGroup(null);
+            lastMessageRepository.save(lastMessageAnother);
+        }else{
+            lastMessage.setMessage(messageObject);
+            lastMessageRepository.save(lastMessage);
+
+            lastMessageAnother.setMessage(messageObject);
+            lastMessageRepository.save(lastMessageAnother);
+        }
+
 
         // If the receiver is online, send the pMessage via WebSocket
         if (webSocketSessionTracker.isUserOnline(receiver.getUserName())) {
@@ -72,6 +103,12 @@ public class MessageService {
 
         // If the receiver is online, send the pMessage via WebSocket
         for (User member : group.getGroupMemberList()) {
+            LastMessage lastMessage=new LastMessage();
+            lastMessage.setSender(member);
+            lastMessage.setGroup(group);
+            lastMessage.setMessage(message);
+            lastMessageRepository.save(lastMessage);
+
             if (webSocketSessionTracker.isUserOnline(member.getUserName())) {
                 messagingTemplate.convertAndSendToUser(member.getUserName(), "/topic/messages", pMessage);
             }
@@ -79,16 +116,17 @@ public class MessageService {
     }
 
 
-    public List<ConversationDto> getConversationList() {
+    public List<LastMessage> getConversationList() {
         User user = (User) userService.getCurrentUser();
-        List<Object[]> conversationList = messageRepository.findConversationList(user);
-
-        return conversationList.stream().map(obj -> new ConversationDto(
-                (Long) obj[0],
-                (String) obj[1],
-                (LocalDateTime) obj[2],
-                (boolean) obj[3]
-        )).collect(Collectors.toList());
+//        List<Object[]> conversationList = messageRepository.findConversationList(user);
+//
+//        return conversationList.stream().map(obj -> new ConversationDto(
+//                (Long) obj[0],
+//                (String) obj[1],
+//                (LocalDateTime) obj[2],
+//                (boolean) obj[3]
+//        )).collect(Collectors.toList());
+        return lastMessageRepository.findBySender(user);
     }
 
 
