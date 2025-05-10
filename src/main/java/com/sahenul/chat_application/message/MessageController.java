@@ -41,7 +41,7 @@ public class MessageController {
     //for testing purpose
     @PostMapping
     public ResponseEntity<?> sendMessage(@RequestParam(name = "receiverId") Long receiverId, @RequestParam(name = "message") String message) {
-        messageService.sendMessageToUser(receiverId, message);
+        messageService.sendMessageToUser(null, receiverId, message);
         return ResponseEntity.ok().build();
     }
 }

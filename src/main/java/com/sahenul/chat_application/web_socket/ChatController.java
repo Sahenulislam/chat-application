@@ -8,6 +8,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
@@ -16,12 +18,15 @@ public class ChatController {
     private final MessageService messageService;
 
 
-    @MessageMapping("/chat/{receiverId}") // Mapped to STOMP endpoint /app/chat
-    public void sendMessageToUser(@DestinationVariable Long receiverId, String message) {
-        System.out.println("Message received for receiverId: " + receiverId);
+    @MessageMapping("/chat/{receiverId}") // Mapped to STOMP endpoint /app/chat/{receiverId}
+    public void sendMessageToUser(@DestinationVariable Long receiverId,
+                                  String message,
+                                  Principal principal) {
+        String senderEmail = principal.getName(); // Retrieved from JWT
+        System.out.println("Sender: " + senderEmail + ", Receiver: " + receiverId + ", Message: " + message);
 
-        messageService.sendMessageToUser(receiverId, message);
-
+        // Pass sender info to the service
+        messageService.sendMessageToUser(senderEmail, receiverId, message);
     }
 
 

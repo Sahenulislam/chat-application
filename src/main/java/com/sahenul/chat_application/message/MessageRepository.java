@@ -72,7 +72,7 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
             AND m.sender=:currentUser)
             ORDER by m.timestamp
             """)
-    List<Message> findConversationByUser(User curentUser, User partner);
+    List<Message> findConversationByUser(User currentUser, User partner);
 
 
     @Query("""

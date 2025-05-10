@@ -1,5 +1,9 @@
 package com.sahenul.chat_application.message;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sahenul.chat_application.chat_group.ChatGroup;
 import com.sahenul.chat_application.chat_group.ChatGroupService;
 import com.sahenul.chat_application.message.last_message.LastMessage;
@@ -12,7 +16,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -33,8 +39,8 @@ public class MessageService {
     }
 
 
-    public void sendMessageToUser(Long receiverId, String pMessage) {
-        User sender = (User) userService.getCurrentUser();
+    public void sendMessageToUser(String userEmail, Long receiverId, String pMessage) {
+        User sender = userService.findByEmail(userEmail);
 
         User receiver = userService.getCurrentUser(receiverId);
 
@@ -70,7 +76,7 @@ public class MessageService {
             lastMessageAnother.setMessage(messageObject);
             lastMessageAnother.setChatGroup(null);
             lastMessageRepository.save(lastMessageAnother);
-        }else{
+        } else {
             lastMessage.setMessage(messageObject);
             lastMessageRepository.save(lastMessage);
 
@@ -80,9 +86,20 @@ public class MessageService {
 
 
         // If the receiver is online, send the pMessage via WebSocket
-        if (webSocketSessionTracker.isUserOnline(receiver.getUserName())) {
-            messagingTemplate.convertAndSendToUser(receiver.getUserName(), "/queue/messages", pMessage);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("content", pMessage);
+        payload.put("senderId", sender.getId());
+        payload.put("receiverId", receiver.getId());
+        payload.put("timestamp", LocalDateTime.now());
+
+
+        if (webSocketSessionTracker.isUserOnline(receiver.getEmail())) {
+            messagingTemplate.convertAndSendToUser(receiver.getEmail(), "/queue/messages", payload);
         }
+
+
+        messagingTemplate.convertAndSendToUser(userEmail, "/queue/messages", payload);
+
     }
 
 
@@ -109,8 +126,8 @@ public class MessageService {
             lastMessage.setMessage(message);
             lastMessageRepository.save(lastMessage);
 
-            if (webSocketSessionTracker.isUserOnline(member.getUserName())) {
-                messagingTemplate.convertAndSendToUser(member.getUserName(), "/topic/messages", pMessage);
+            if (webSocketSessionTracker.isUserOnline(member.getEmail())) {
+                messagingTemplate.convertAndSendToUser(member.getEmail(), "/topic/messages", pMessage);
             }
         }
     }
