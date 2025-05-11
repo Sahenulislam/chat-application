@@ -95,4 +95,14 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
+    public List<User> getAllWithoutMe() {
+        User user=(User) getCurrentUser();
+
+        return userRepository.findAllWithoutMe(user.getId());
+    }
 }

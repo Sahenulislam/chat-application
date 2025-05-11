@@ -17,4 +17,9 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<User> userList(String userName, String name);
     User findByEmail(String email);
 
+    @Query("""
+            select u from User as u
+            where u.id != :userId
+            """)
+    List<User> findAllWithoutMe(Long userId);
 }

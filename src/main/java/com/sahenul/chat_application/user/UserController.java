@@ -34,6 +34,12 @@ public class UserController {
     }
 
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllWithoutMe() {
+        return ResponseEntity.ok().body(userService.getAllWithoutMe());
+    }
+
+
     @GetMapping("/me")
     public Object getUserInfo() {
 
