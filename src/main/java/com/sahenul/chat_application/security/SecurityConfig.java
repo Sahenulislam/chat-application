@@ -47,7 +47,10 @@ public class SecurityConfig {
                                 "/oauth2/**",
                                 "/login/oauth2/code/google/**",
                                 "/chat/**",
-                                "/app/**"
+                                "/app/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**"
 
                         ).permitAll()  // Allow login, register, and OAuth2
                         .anyRequest().authenticated() // Secure other APIs
