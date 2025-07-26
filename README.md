@@ -1,6 +1,6 @@
 # Chat Application 💬
 
-This is a full-stack real-time chat application built with **Spring Boot** for the backend and **Vue.js** for the frontend (in a separate repository). It supports both **one-to-one** and **group messaging**, with real-time communication over **WebSocket (STOMP)**.
+This is a full-stack real-time chat application built with **Spring Boot** for the backend and **Vue.js** for the frontend. It supports both **one-to-one** and **group messaging**, with real-time communication over **WebSocket (STOMP)**.
 
 ---
 
@@ -132,9 +132,17 @@ stompClient.connect({ Authorization: `Bearer ${jwtToken}` }, () => {
 
 ---
 
-## 🖼️ Frontend
+## 🖼️ Frontend Repository
 
-> The frontend is built with Vue 3 and supports real-time messaging. It is in a separate repository (private/public depending on your setup).
+Frontend of this project is available at:  
+👉 **[github.com/Sahenulislam/chat-application-frontend](https://github.com/Sahenulislam/chat-application-frontend)**
+
+It is built with:
+- Vue 3
+- Vue Router
+- Tailwind CSS
+- Axios
+- WebSocket client
 
 ---
 
